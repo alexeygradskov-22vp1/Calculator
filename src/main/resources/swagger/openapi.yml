@@ -258,16 +258,14 @@ components:
 
     EmploymentStatus:
       enum:
-        - Worker
         - Employee
         - Self-employed
+        - Unemployed
+        - Business_owner
 
     Position:
       enum:
-        - Permanent
-        - Fixed-term
-        - Seasonal
-        - Volunteer
-        - Contingent
-        - Internship
-        - Apprenticeship
+        - Top_manager
+        - Middle_manager
+        - Lower_level_manager
+        - Contractor

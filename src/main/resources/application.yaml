@@ -1,3 +1,11 @@
 spring:
   application:
     name: Calculator
+
+
+credit:
+  rate: 15
+  insurance-cost: 10000
+  reduction-insurance-rates: 3
+  reduction-salary-rates: 1
+  insurance-ratio: 100000
