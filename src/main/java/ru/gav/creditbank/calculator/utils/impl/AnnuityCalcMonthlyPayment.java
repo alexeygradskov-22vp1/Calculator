@@ -6,10 +6,6 @@ import ru.gav.creditbank.calculator.config.GlobalProps;
 import ru.gav.creditbank.calculator.utils.CalcMonthlyPayment;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.YearMonth;
 
 @Component
 @RequiredArgsConstructor

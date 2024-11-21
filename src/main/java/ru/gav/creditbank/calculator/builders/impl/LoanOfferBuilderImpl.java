@@ -22,14 +22,14 @@ public class LoanOfferBuilderImpl implements LoanOfferBuilder {
     @Override
     public LoanOfferDto build(LoanOfferDto loanOfferDto) {
         return loanOfferDto.
-                statementId(generateUUID(loanOfferDto)).
+                statementId(generateUUID()).
                 rate(calculateRate(loanOfferDto)).
                 totalAmount(calculateTotalAmount(loanOfferDto)).
                 monthlyPayment(calculateMonthlyPayment(loanOfferDto));
     }
 
 
-    private UUID generateUUID(LoanOfferDto loanOfferDto) {
+    private UUID generateUUID() {
         return UUID.randomUUID();
     }
 

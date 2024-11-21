@@ -50,10 +50,4 @@ public class CalculatorServiceImpl implements CalculatorService {
         }
         return offers;
     }
-
-    private void calcAnnuityPaymentScheme(BigDecimal rate){
-
-    }
-
-
 }
