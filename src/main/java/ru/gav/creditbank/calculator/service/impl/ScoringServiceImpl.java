@@ -12,13 +12,20 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
+/**
+ * Бин для скоринга данных
+ */
 @RequiredArgsConstructor
 @Service
 public class ScoringServiceImpl implements ScoringService {
     private final ExceptionSupplier exceptionSupplier;
     private final CreditProperties creditProperties;
 
-
+    /**
+     * Метод для полного скоринга данных
+     * @param scoringDataDto данные для скоринга
+     * @return процентная ставка на основе скоринга
+     */
     @Override
     public BigDecimal scoreRateOfCredit(ScoringDataDto scoringDataDto) {
         validAge(scoringDataDto);
@@ -32,6 +39,13 @@ public class ScoringServiceImpl implements ScoringService {
         return currentRate;
     }
 
+    /**
+     * Вычисляет ставку на основе рабочего статуса
+     * @param currentRate текущая ставка
+     * @param employmentStatusDto рабочий статус заемщика
+     * @return вычисленная ставка
+     */
+
     private BigDecimal calculateRateByEmployeeStatus(BigDecimal currentRate, EmploymentStatusDto employmentStatusDto) {
         Optional<BigDecimal> rateReduction = switch (employmentStatusDto) {
             case EMPLOYEE -> Optional.of(new BigDecimal(0));
@@ -44,6 +58,12 @@ public class ScoringServiceImpl implements ScoringService {
         );
     }
 
+    /**
+     * Вычисляет ставку на основе позиции заемщика
+     * @param currentRate текущая ставка
+     * @param positionDto рабочая позиция заемщика
+     * @return вычисленная ставка
+     */
     private BigDecimal calculateRateByEmployeePosition(BigDecimal currentRate, PositionDto positionDto) {
         BigDecimal rateReduction = switch (positionDto) {
             case TOP_MANAGER -> new BigDecimal(3);
@@ -54,6 +74,13 @@ public class ScoringServiceImpl implements ScoringService {
         return currentRate.subtract(rateReduction);
     }
 
+    /**
+     * Вычисляет ставку на основе семейного положения
+     * @param currentRate текущая ставка
+     * @param maritalStatusDto семейное положение заемщика
+     * @return вычисленная ставка
+     */
+
     private BigDecimal calculateRateByMaritalStatus(BigDecimal currentRate, MaritalStatusDto maritalStatusDto) {
         BigDecimal rateReduction = switch (maritalStatusDto) {
             case SINGLE -> new BigDecimal(-1);
@@ -62,10 +89,22 @@ public class ScoringServiceImpl implements ScoringService {
         return currentRate.subtract(rateReduction);
     }
 
+    /**
+     * Вспомогательный метод для расчета возраста заемщика
+     * @param birthdate дата рождения заемщика
+     * @return возраст заемщика
+     */
     private long calcAge(LocalDate birthdate) {
         LocalDate now = LocalDate.now();
         return ChronoUnit.YEARS.between(birthdate, now);
     }
+
+    /**
+     * Вычисляет ставку на основе пола и возраста заемщика
+     * @param currentRate текущая ставка
+     * @param scoringDataDto данные заемщика
+     * @return вычисленная ставка
+     */
 
     private BigDecimal calculateRateByGenderAndAge(BigDecimal currentRate, ScoringDataDto scoringDataDto) {
         BigDecimal rateReduction = new BigDecimal(0);
@@ -83,11 +122,20 @@ public class ScoringServiceImpl implements ScoringService {
 
     //Validation Methods
 
+    /**
+     * Проверяет стаж заемщика
+     * @param scoringDataDto данные заемщика
+     */
     private void validWorkExperience(ScoringDataDto scoringDataDto){
         if (scoringDataDto.getEmployment().getWorkExperienceTotal()<18||
                 scoringDataDto.getEmployment().getWorkExperienceCurrent()<3)
             throw exceptionSupplier.scoringExceptionSupplier("Unacceptable length of work experience").get();
     }
+
+    /**
+     * Проверяет размер 24 зарплат заемщика
+     * @param scoringDataDto данные заемщика
+     */
 
     private void validLoanAmountGreaterThenTwentyFourSalaries(ScoringDataDto scoringDataDto) {
         BigDecimal twentyFourSalaries = scoringDataDto.getEmployment().getSalary().multiply(new BigDecimal(24));
@@ -95,6 +143,11 @@ public class ScoringServiceImpl implements ScoringService {
             throw exceptionSupplier.scoringExceptionSupplier("Twenty four salaries less than requested amount").get();
         }
     }
+
+    /**
+     * Проверяет возраст заемщика
+     * @param scoringDataDto данные заемщика
+     */
 
     private void validAge(ScoringDataDto scoringDataDto) {
         long age = calcAge(scoringDataDto.getBirthdate());
