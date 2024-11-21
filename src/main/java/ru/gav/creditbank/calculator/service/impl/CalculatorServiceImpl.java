@@ -1,6 +1,7 @@
 package ru.gav.creditbank.calculator.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.gav.calculator.model.CreditDto;
 import ru.gav.calculator.model.LoanOfferDto;
@@ -9,7 +10,7 @@ import ru.gav.calculator.model.ScoringDataDto;
 import ru.gav.creditbank.calculator.builders.LoanOfferBuilder;
 import ru.gav.creditbank.calculator.mappers.LoanStatementLoanOfferMapper;
 import ru.gav.creditbank.calculator.service.CalculatorService;
-import ru.gav.creditbank.calculator.service.ScoringService;
+import ru.gav.creditbank.calculator.utils.PaymentScheme;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,7 +22,9 @@ public class CalculatorServiceImpl implements CalculatorService {
 
     private final LoanStatementLoanOfferMapper mapper;
     private final LoanOfferBuilder loanOfferBuilder;
-    private final ScoringService scoringService;
+
+    @Qualifier(value = "AnnuityPaymentScheme")
+    private final PaymentScheme annuityPaymentScheme;
 
 
     @Override
@@ -32,8 +35,7 @@ public class CalculatorServiceImpl implements CalculatorService {
 
     @Override
     public CreditDto scoreData(ScoringDataDto scoringDataDto) {
-        BigDecimal rate = scoringService.scoreRateOfCredit(scoringDataDto);
-        return null;
+        return annuityPaymentScheme.calculatePaymentScheme(scoringDataDto);
     }
 
     private List<LoanOfferDto> combine(LoanOfferDto loanOfferDto) {

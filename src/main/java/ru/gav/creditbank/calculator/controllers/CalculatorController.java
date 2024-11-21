@@ -17,7 +17,7 @@ public class CalculatorController implements CalculatorApi {
     private final CalculatorService calculatorService;
     @Override
     public ResponseEntity<CreditDto> calcCredit(ScoringDataDto scoringDataDto) {
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(calculatorService.scoreData(scoringDataDto));
     }
 
     @Override

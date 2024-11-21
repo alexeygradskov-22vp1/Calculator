@@ -60,13 +60,12 @@ public class ScoringServiceImpl implements ScoringService {
             case SINGLE -> new BigDecimal(-1);
             case MARRIED -> new BigDecimal(3);
         };
-        return currentRate.add(rateReduction);
+        return currentRate.subtract(rateReduction);
     }
 
     private long calcAge(LocalDate birthdate) {
-        Instant birthdateInst = Instant.from(birthdate);
-        Instant now = Instant.now();
-        return ChronoUnit.YEARS.between(birthdateInst, now);
+        LocalDate now = LocalDate.now();
+        return ChronoUnit.YEARS.between(birthdate, now);
     }
 
     private BigDecimal calculateRateByGenderAndAge(BigDecimal currentRate, ScoringDataDto scoringDataDto) {

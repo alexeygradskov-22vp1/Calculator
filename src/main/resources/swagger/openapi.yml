@@ -101,7 +101,7 @@ components:
           type: string
           format: date
           nullable: false
-          example: "1999-01-01"
+          example: "1999.01.01"
           x-field-extra-annotation: "@ru.gav.creditbank.calculator.validation.CheckAge"
         passport_series:
           nullable: false

@@ -7,5 +7,5 @@ import java.math.BigDecimal;
 
 public interface PaymentScheme {
 
-    CreditDto calculatePaymentScheme(ScoringDataDto scoringDataDto, BigDecimal rate);
+    CreditDto calculatePaymentScheme(ScoringDataDto scoringDataDto);
 }

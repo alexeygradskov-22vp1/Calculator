@@ -5,8 +5,10 @@ import org.springframework.stereotype.Component;
 import ru.gav.calculator.model.LoanOfferDto;
 import ru.gav.creditbank.calculator.builders.LoanOfferBuilder;
 import ru.gav.creditbank.calculator.config.CreditProperties;
+import ru.gav.creditbank.calculator.utils.CalcMonthlyPayment;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.UUID;
 
@@ -15,23 +17,23 @@ import java.util.UUID;
 public class LoanOfferBuilderImpl implements LoanOfferBuilder {
 
     private final CreditProperties creditProperties;
+    private final CalcMonthlyPayment calcMonthlyPaymentService;
 
     @Override
     public LoanOfferDto build(LoanOfferDto loanOfferDto) {
-        LoanOfferDto result = loanOfferDto;
-        result = generateUUID(result);
-        result = calculateRate(result);
-        result = calculateTotalAmount(result);
-        result = calculateMonthlyPayment(result);
-        return result;
+        return loanOfferDto.
+                statementId(generateUUID(loanOfferDto)).
+                rate(calculateRate(loanOfferDto)).
+                totalAmount(calculateTotalAmount(loanOfferDto)).
+                monthlyPayment(calculateMonthlyPayment(loanOfferDto));
     }
 
 
-    private LoanOfferDto generateUUID(LoanOfferDto loanOfferDto) {
-        return loanOfferDto.statementId(UUID.randomUUID());
+    private UUID generateUUID(LoanOfferDto loanOfferDto) {
+        return UUID.randomUUID();
     }
 
-    private LoanOfferDto calculateRate(LoanOfferDto loanOfferDto) {
+    private BigDecimal calculateRate(LoanOfferDto loanOfferDto) {
         loanOfferDto.setRate(creditProperties.getRate());
         if (loanOfferDto.getIsInsuranceEnabled()) {
             loanOfferDto.setRate(loanOfferDto.getRate().subtract(creditProperties.getReductionInsuranceRates()));
@@ -39,26 +41,30 @@ public class LoanOfferBuilderImpl implements LoanOfferBuilder {
         if (loanOfferDto.getIsSalaryClient()) {
             loanOfferDto.setRate(loanOfferDto.getRate().subtract(creditProperties.getReductionSalaryRates()));
         }
-        return loanOfferDto;
+        return loanOfferDto.getRate();
     }
 
-    private LoanOfferDto calculateTotalAmount(LoanOfferDto loanOfferDto) {
+    private BigDecimal calculateTotalAmount(LoanOfferDto loanOfferDto) {
         loanOfferDto.setTotalAmount(loanOfferDto.getRequestedAmount());
         if (loanOfferDto.getIsInsuranceEnabled()) {
             loanOfferDto.setTotalAmount(loanOfferDto.getRequestedAmount().add(calculateInsuranceCost(loanOfferDto.getRequestedAmount())));
         }
-        return loanOfferDto;
+        return loanOfferDto.getTotalAmount();
     }
 
 
     private BigDecimal calculateInsuranceCost(BigDecimal requestedAmount){
-        return requestedAmount.divide(creditProperties.getInsuranceRatio()).multiply(creditProperties.getInsuranceCost());
+        return requestedAmount.
+                divide(creditProperties.getInsuranceRatio(), new MathContext(10, RoundingMode.CEILING)).
+                multiply(creditProperties.getInsuranceCost());
     }
 
-    private LoanOfferDto calculateMonthlyPayment(LoanOfferDto loanOfferDto) {
-        BigDecimal monthlyPayment = loanOfferDto.getTotalAmount().divide(new BigDecimal(loanOfferDto.getTerm()), RoundingMode.HALF_UP);
-        BigDecimal interestPayment = monthlyPayment.multiply(loanOfferDto.getRate()).divide(new BigDecimal(100));
-        loanOfferDto.monthlyPayment(monthlyPayment.add(interestPayment));
-        return loanOfferDto;
+    private BigDecimal calculateMonthlyPayment(LoanOfferDto loanOfferDto) {
+        loanOfferDto.monthlyPayment(
+                calcMonthlyPaymentService.calc(
+                        loanOfferDto.getRate(),
+                        loanOfferDto.getTerm(),
+                        loanOfferDto.getTotalAmount()));
+        return loanOfferDto.getMonthlyPayment();
     }
 }
