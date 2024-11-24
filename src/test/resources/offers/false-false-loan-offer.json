@@ -1,0 +1,6 @@
+{
+  "requested_amount": 100000,
+  "term": 24,
+  "is_insurance_enabled": false,
+  "is_salary_client": false
+}

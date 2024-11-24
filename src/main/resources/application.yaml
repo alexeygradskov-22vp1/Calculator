@@ -5,7 +5,7 @@ spring:
 
 credit:
   rate: 15
-  insurance-cost: 10000
+  insurance-cost: 1000
   reduction-insurance-rates: 3
   reduction-salary-rates: 1
   insurance-ratio: 100000
