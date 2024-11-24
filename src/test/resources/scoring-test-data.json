@@ -1,26 +1,26 @@
 {
   "amount": 200000,
   "term": 24,
-  "first_name": "Алексей",
-  "last_name": "Градсков",
-  "middle_name": "Владимирович",
+  "firstName": "Алексей",
+  "lastName": "Градсков",
+  "middleName": "Владимирович",
   "gender": "Male",
   "birthdate": "2002-11-11",
-  "passport_series": "6473",
-  "passport_number": "783476",
-  "passport_issue_date": "2020-11-20",
-  "passport_issue_branch": "МВД ПО МОСКОВСКОЙ ОБЛАСТИ",
-  "marital_status": "Single",
+  "passportSeries": "6473",
+  "passportNumber": "783476",
+  "passportIssueDate": "2020-11-20",
+  "passportIssueBranch": "МВД ПО МОСКОВСКОЙ ОБЛАСТИ",
+  "maritalStatus": "Single",
   "dependentAmount": 40000,
   "employment": {
-    "employment_status": "Employee",
-    "employer_INN": "546343562332",
+    "employmentStatus": "Employee",
+    "employerINN": "546343562332",
     "salary": 70000,
     "position": "Top_manager",
-    "work_experience_total": 20,
-    "work_experience_current": 4
+    "workExperienceTotal": 20,
+    "workExperienceCurrent": 4
   },
-  "account_number": "vuirebivubeu",
-  "is_insurance_enabled": false,
-  "is_salary_client": false
+  "accountNumber": "vuirebivubeu",
+  "isInsuranceEnabled": false,
+  "isSalaryClient": false
 }
