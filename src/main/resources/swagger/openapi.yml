@@ -6,3 +6,214 @@ info:
   description: Микросервис калькулятор
   contact:
     email: gradskovaleksej@gmail.com
+
+tags:
+  - Calculator
+paths:
+  /calculator/offers:
+    post:
+      tags:
+        - Calculator
+      description:  расчёт возможных условий кредита
+      operationId: calculateOffers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanStatementRequest'
+      responses:
+        '200':
+          description: Предложения возможных условий по кредиту
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LoanOffer'
+  
+  /calculator/calc:
+    post:
+      tags:
+        - Calculator
+      description: валидация присланных данных + скоринг данных + полный расчет параметров кредита
+      operationId: calcCredit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScoringData'
+      responses:
+        200:
+          description: TODO
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Credit'
+    
+
+components:
+  schemas:
+    LoanStatementRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+        term:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        middle_name:
+          type: string
+        email:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        passport_series:
+          type: string
+        passport_number:
+          type: string
+
+    LoanOffer:
+      type: object
+      properties:
+        statement_id:
+          type: string
+          format: uuid
+        requested_amount:
+          type: number
+        total_amount:
+          type: number
+        term:
+          type: integer
+        monthly_payment:
+          type: number
+        rate:
+          type: number
+        is_insurance_enabled:
+          type: boolean
+        is_salary_client:
+          type: boolean
+
+    ScoringData:
+      type: object
+      properties:
+        amount:
+          type: number
+        term:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        middle_name:
+          type: string
+        gender:
+          $ref: '#/components/schemas/Gender'
+        birthdate:
+          type: string
+          format: date
+        passport_series:
+          type: string
+        passport_number:
+          type: string
+        passport_issue_date:
+          type: string
+          format: date
+        passport_issue_branch:
+          type: string
+        marital_status:
+          $ref: '#/components/schemas/MaritalStatus'
+        dependentAmount:
+          type: integer
+        employment:
+          $ref: '#/components/schemas/Employment'
+        account_number:
+          type: string
+        is_insurance_enabled:
+          type: boolean
+        is_salary_client:
+          type: boolean
+
+    Gender:
+      enum:
+        - Male
+        - Female
+
+    MaritalStatus:
+      enum:
+        - Single
+        - Married
+
+    Credit:
+      type: object
+      properties:
+        amount:
+          type: number
+        term:
+          type: integer
+        monthly_payment:
+          type: number
+        rate:
+          type: number
+        psk:
+          type: number
+        is_insurance_enabled:
+          type: boolean
+        is_salary_client:
+          type: boolean
+        payment_schedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentScheduleElement'
+
+    Employment:
+      type: object
+      properties:
+        employment_status:
+          $ref: '#/components/schemas/EmploymentStatus'
+        employer_INN:
+          type: string
+        salary:
+          type: number
+        position:
+          $ref: '#/components/schemas/Position'
+        work_experience_total:
+          type: integer
+        work_experience_current:
+          type: integer
+
+    PaymentScheduleElement:
+      type: object
+      properties:
+        number:
+          type: integer
+        date:
+          type: string
+          format: date
+        total_payment:
+          type: number
+        interest_payment:
+          type: number
+        debt_payment:
+          type: number
+        remaining_debt:
+          type: number
+
+    EmploymentStatus:
+      enum:
+        - Worker
+        - Employee
+        - Self-employed
+
+    Position:
+      enum:
+        - Permanent
+        - Fixed-term
+        - Seasonal
+        - Volunteer
+        - Contingent
+        - Internship
+        - Apprenticeship
