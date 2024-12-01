@@ -54,48 +54,102 @@ paths:
 components:
   schemas:
     LoanStatementRequest:
+      required:
+        - amount
+        - term
+        - first_name
+        - last_name
+        - email
+        - birthdate
+        - passport_series
+        - passport_number
       type: object
       properties:
         amount:
           type: number
+          nullable: false
+          example: 100000
+          minimum: 20000
         term:
           type: integer
+          nullable: false
+          minimum: 6
+          example: 6
         first_name:
           type: string
+          nullable: false
+          example: "Ivanov"
+          minLength: 2
+          maxLength: 30
         last_name:
           type: string
+          nullable: false
+          example: "Ivan"
+          minLength: 2
+          maxLength: 30
         middle_name:
           type: string
+          example: "Ivanovich"
+          minLength: 2
+          maxLength: 30
         email:
           type: string
+          nullable: false
+          example: "IvanovII@gmail.com"
+          pattern: "^[a-z0-9A-Z_!#$%&'*+/=?`{|}~^.-]+@[a-z0-9A-Z.-]+$"
         birthdate:
           type: string
           format: date
+          nullable: false
+          example: "1999-01-01"
+          x-field-extra-annotation: "@ru.gav.creditbank.calculator.validation.CheckAge"
         passport_series:
+          nullable: false
           type: string
+          maxLength: 4
+          minLength: 4
+          example: "1111"
         passport_number:
           type: string
+          nullable: false
+          minLength: 6
+          maxLength: 6
+          example: "111111"
 
     LoanOffer:
       type: object
+      description: "Предложение по кредиту"
       properties:
         statement_id:
           type: string
           format: uuid
+          nullable: false
         requested_amount:
           type: number
+          nullable: false
+          example: 20000
         total_amount:
           type: number
+          nullable: false
+          example: 20000
         term:
           type: integer
+          nullable: false
+          example: 6
         monthly_payment:
           type: number
+          nullable: false
+          example: 10000
         rate:
           type: number
+          nullable: false
+          example: 10000
         is_insurance_enabled:
           type: boolean
+          nullable: false
         is_salary_client:
           type: boolean
+          nullable: false
 
     ScoringData:
       type: object
