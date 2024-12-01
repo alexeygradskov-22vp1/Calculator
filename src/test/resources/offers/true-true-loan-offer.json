@@ -1,6 +1,6 @@
 {
-  "requested_amount": 100000,
+  "requestedAmount": 100000,
   "term": 24,
-  "is_insurance_enabled": true,
-  "is_salary_client": true
+  "isInsuranceEnabled": true,
+  "isSalaryClient": true
 }

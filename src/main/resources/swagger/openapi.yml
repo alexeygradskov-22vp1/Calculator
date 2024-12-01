@@ -8,7 +8,8 @@ info:
     email: gradskovaleksej@gmail.com
 
 tags:
-  - Calculator
+  - name: Calculator
+    description: "Calculator API"
 paths:
   /calculator/offers:
     post:
@@ -30,6 +31,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LoanOffer'
+        400:
+          description: Ошибка при скоринге данных
+          content:
+            application/json:
+              schema:
+                type: string
+                description: "Ошибка при скоринге {} данных"
   
   /calculator/calc:
     post:
@@ -41,6 +49,7 @@ paths:
         content:
           application/json:
             schema:
+
               $ref: '#/components/schemas/ScoringData'
       responses:
         200:
@@ -49,20 +58,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Credit'
-    
+        400:
+          description: Ошибка при скоринге данных
+          content:
+            application/json:
+              schema:
+                type: string
+                description: "Ошибка при скоринге {} данных"
+
 
 components:
   schemas:
     LoanStatementRequest:
+      nullable: false
       required:
         - amount
         - term
-        - first_name
-        - last_name
+        - firstName
+        - lastName
         - email
         - birthdate
-        - passport_series
-        - passport_number
+        - passportSeries
+        - passportNumber
       type: object
       properties:
         amount:
@@ -75,19 +92,19 @@ components:
           nullable: false
           minimum: 6
           example: 6
-        first_name:
+        firstName:
           type: string
           nullable: false
           example: "Ivanov"
           minLength: 2
           maxLength: 30
-        last_name:
+        lastName:
           type: string
           nullable: false
           example: "Ivan"
           minLength: 2
           maxLength: 30
-        middle_name:
+        middleName:
           type: string
           example: "Ivanovich"
           minLength: 2
@@ -103,13 +120,13 @@ components:
           nullable: false
           example: "1999.01.01"
           x-field-extra-annotation: "@ru.gav.creditbank.calculator.validation.CheckAge"
-        passport_series:
+        passportSeries:
           nullable: false
           type: string
           maxLength: 4
           minLength: 4
           example: "1111"
-        passport_number:
+        passportNumber:
           type: string
           nullable: false
           minLength: 6
@@ -120,15 +137,15 @@ components:
       type: object
       description: "Предложение по кредиту"
       properties:
-        statement_id:
+        statementId:
           type: string
           format: uuid
           nullable: false
-        requested_amount:
+        requestedAmount:
           type: number
           nullable: false
           example: 20000
-        total_amount:
+        totalAmount:
           type: number
           nullable: false
           example: 20000
@@ -136,7 +153,7 @@ components:
           type: integer
           nullable: false
           example: 6
-        monthly_payment:
+        monthlyPayment:
           type: number
           nullable: false
           example: 10000
@@ -144,102 +161,154 @@ components:
           type: number
           nullable: false
           example: 10000
-        is_insurance_enabled:
+        isInsuranceEnabled:
           type: boolean
           nullable: false
-        is_salary_client:
+        isSalaryClient:
           type: boolean
           nullable: false
 
     ScoringData:
+      nullable: false
       type: object
+      description: Оценочные данные
+      required:
+        - amount
+        - term
+        - firstName
+        - lastName
+        - gender
+        - birthdate
+        - passportSeries
+        - passportNumber
+        - passportIssueBranch
+        - passportIssueDate
+        - employment
+        - maritalStatus
+        - dependentAmount
+        - accountNumber
+        - isSalaryClient
+        - isInsuranceEnabled
       properties:
         amount:
           type: number
+          nullable: false
+          example: 20000
         term:
           type: integer
-        first_name:
+          nullable: false
+          minimum: 6
+          maximum: 36
+        firstName:
           type: string
-        last_name:
+          nullable: false
+          example: "Ivan"
+        lastName:
           type: string
-        middle_name:
+          nullable: false
+          example: "Ivanov"
+        middleName:
           type: string
+          example: "Ivanovich"
+          nullable: false
         gender:
           $ref: '#/components/schemas/Gender'
         birthdate:
           type: string
           format: date
-        passport_series:
+          nullable: false
+          x-field-extra-annotation: "@ru.gav.creditbank.calculator.validation.CheckAge"
+        passportSeries:
           type: string
-        passport_number:
+          nullable: false
+          example: "1111"
+          maxLength: 4
+          minLength: 4
+        passportNumber:
           type: string
-        passport_issue_date:
+          nullable: false
+          minLength: 6
+          maxLength: 6
+          example: "111111"
+        passportIssueDate:
           type: string
           format: date
-        passport_issue_branch:
+          nullable: false
+        passportIssueBranch:
           type: string
-        marital_status:
+          nullable: false
+        maritalStatus:
           $ref: '#/components/schemas/MaritalStatus'
         dependentAmount:
           type: integer
+          nullable: false
         employment:
           $ref: '#/components/schemas/Employment'
-        account_number:
+        accountNumber:
           type: string
-        is_insurance_enabled:
+          nullable: false
+        isInsuranceEnabled:
           type: boolean
-        is_salary_client:
+          nullable: false
+        isSalaryClient:
           type: boolean
+          nullable: false
+
 
     Gender:
+      description: Пол заемщика
       enum:
         - Male
         - Female
 
     MaritalStatus:
+      description: Семейное положение
       enum:
         - Single
         - Married
 
     Credit:
+      description: Данные о посчитанном кредите
       type: object
       properties:
         amount:
           type: number
         term:
           type: integer
-        monthly_payment:
+        monthlyPayment:
           type: number
         rate:
           type: number
         psk:
           type: number
-        is_insurance_enabled:
+        isInsuranceEnabled:
           type: boolean
-        is_salary_client:
+        isSalaryClient:
           type: boolean
-        payment_schedule:
+        paymentSchedule:
           type: array
           items:
             $ref: '#/components/schemas/PaymentScheduleElement'
 
     Employment:
+      description: Данные работника
       type: object
       properties:
-        employment_status:
+        employmentStatus:
           $ref: '#/components/schemas/EmploymentStatus'
-        employer_INN:
+        employerINN:
           type: string
         salary:
           type: number
         position:
           $ref: '#/components/schemas/Position'
-        work_experience_total:
+        workExperienceTotal:
           type: integer
-        work_experience_current:
+        workExperienceCurrent:
           type: integer
 
     PaymentScheduleElement:
+      description: Элемент графика платежей
       type: object
       properties:
         number:
@@ -247,16 +316,17 @@ components:
         date:
           type: string
           format: date
-        total_payment:
+        totalPayment:
           type: number
-        interest_payment:
+        interestPayment:
           type: number
-        debt_payment:
+        debtPayment:
           type: number
-        remaining_debt:
+        remainingDebt:
           type: number
 
     EmploymentStatus:
+      description: Рабочий статус
       enum:
         - Employee
         - Self-employed
@@ -264,6 +334,7 @@ components:
         - Business_owner
 
     Position:
+      description: Позиция работника
       enum:
         - Top_manager
         - Middle_manager
