@@ -1,0 +1,11 @@
+{
+  "amount": 100000,
+  "term": 24,
+  "first_name": "Алексей",
+  "last_name": "Градсков",
+  "middle_name": "Владимирович",
+  "email": "Gradskov@gmail.com",
+  "birthdate": "2002-11-11",
+  "passport_series": "4345",
+  "passport_number": "767632"
+}
